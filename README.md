@@ -10,3 +10,6 @@ RGBN camera drivers using the GenICam interface
 The following setup was built using CMake (3.3.0) and Visual Studio 2015 on Windows 10:
 - set up the project: `mkdir build & cd build & cmake .. -G "Visual Studio 14 2015 Win64"`;
 - to quickly build the program from a command line: `cmake --build . --config release`.
+
+## Testing
+Connect your RGBN camera (AD-130GE, GenieNano) and set it up using the GenICamBrowser application. The example app is included in `Apps/GenieApp`.
