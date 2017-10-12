@@ -27,7 +27,7 @@ namespace GenICam {
 
 	class Camera : public CameraBase, public StandardFeature {
 	private:
-		double t_start = 0.0, t_now;
+		double t_start, t_now;
 
 	protected:
 		cv::Mat image;
@@ -52,7 +52,7 @@ namespace GenICam {
 		}
 
 	public:
-		Camera() : cvb_image(0) {
+		Camera() : cvb_image(0), t_start(0.0) {
 		}
 
 		~Camera() {

@@ -1,21 +1,29 @@
-#include "ros/ros.h"
-#include <AD_130GE.h>
 #include <sstream>
+#include <AD_130GE.h>
+
+#include <ros/ros.h>
+#include <sensor_msgs/Image.h>
+#include <sensor_msgs/image_encodings.h>
+#include <cv_bridge/cv_bridge.h>
 
 int main(int argc, char **argv) {
 
   ros::init(argc, argv, "talker");
 
   ros::NodeHandle n;
-  ros::Publisher image_pub = n.advertise<std_msgs::Image>("camera/image", 100);
+  ros::Publisher image_pub = n.advertise<sensor_msgs::Image>("camera/image", 100);
 
   ros::Rate loop_rate(1);
 
   int count = 0;
 
-  std_msgs::Image msg;
+  sensor_msgs::Image msg;
 
-	JAI::AD_130GE camera;
+	cv_bridge::CvImage img_bridge;
+
+std_msgs::Header header; // empty header
+
+	GenICam::JAI::AD_130GE camera;
 
 	try {
 		camera.Init();
@@ -27,13 +35,11 @@ int main(int argc, char **argv) {
   while (ros::ok()) {
 
 	if (image_pub.getNumSubscribers()) {
-	  std::stringstream ss;
-	  ss << "hello world " << count;
-	  msg.data = ss.str();
-
-	    ROS_INFO("%s", msg.data.c_str());
+		header.seq = count; // user defined counter
+		header.stamp = ros::Time::now(); // time
+		img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::RGB8, camera.NDVIImage());
+		img_bridge.toImageMsg(msg); // from cv_bridge to sensor_msgs::Image
 	    image_pub.publish(msg);
-	    loop_rate.sleep();
 	    ++count;
 	}
 

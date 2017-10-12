@@ -111,6 +111,7 @@ namespace GenICam {
 			return value;
 		}
 
+
 		void NodeInfo(NODE node) {
 			TNodeType node_type;
 			char name[256] = { 0 };

@@ -10,6 +10,10 @@ if(CATKIN_ENV)
 	find_package(catkin REQUIRED COMPONENTS
 	  roscpp
 	  std_msgs
+	sensor_msgs
+cv_bridge
+image_transport
+
 	)
 
 	###################################
@@ -24,7 +28,7 @@ if(CATKIN_ENV)
 	catkin_package(
 	#  INCLUDE_DIRS include
 	#  LIBRARIES genie_ros
-	  CATKIN_DEPENDS roscpp std_msgs
+	  CATKIN_DEPENDS roscpp std_msgs sensor_msgs cv_bridge image_transport
 	#  DEPENDS system_lib
 	)
 	add_subdirectory(genie_ros)
