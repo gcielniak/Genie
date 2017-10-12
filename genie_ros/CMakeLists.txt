@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(genie_ros)
+#cmake_minimum_required(VERSION 2.8.3)
+#project(genie_ros)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -7,10 +7,10 @@ project(genie_ros)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-)
+#find_package(catkin REQUIRED COMPONENTS
+#  roscpp
+#  std_msgs
+#)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -92,21 +92,6 @@ find_package(catkin REQUIRED COMPONENTS
 #   cfg/DynReconf2.cfg
 # )
 
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES genie_ros
-#  CATKIN_DEPENDS roscpp std_msgs
-#  DEPENDS system_lib
-)
 
 ###########
 ## Build ##
@@ -133,6 +118,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/genie_ros_node.cpp)
 
+add_dependencies(${PROJECT_NAME}_node GenieLib)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

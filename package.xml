@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>genie_ros</name>
+  <name>genie</name>
   <version>0.0.0</version>
   <description>The genie_ros package</description>
 
