@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Parameter.h"
+#include "Feature.h"
 #include <opencv2/opencv.hpp>
 ///
 /// A GenICam Camera class.
@@ -8,32 +8,45 @@
 
 namespace GenICam {
 
+	///The base interface for GenICam cameras
 	class CameraBase {
 	protected:
 		cv::Mat image;
 
 	public:
+		//Get the captured image
 		virtual const cv::Mat& Image() {
 			return image;
 		}
 
+		//initialise the device
 		virtual void Init(int device_nr) = 0;
+
+		//start acquisition
 		virtual void Start() = 0;
+
+		//stop acquisition
 		virtual void Stop() = 0;
+
+		//capture image
 		virtual void Capture() = 0;
+
+		//get image (sensor) timestamp
 		virtual long long TimeStamp() = 0;
+
+		//get camera name
 		virtual const std::string Name() = 0;
 	};
 
+	///Generic GenICam camera with a set of standard features
 	class Camera : public CameraBase, public StandardFeature {
 	private:
 		double t_start, t_now;
 
 	protected:
-		cv::Mat image;
-
 		IMG cvb_image;
 
+		///Load driver
 		static IMG LoadDriver(std::string driver_name = "%CVB%/drivers/GenICam.vin") {
 			static const size_t DRIVERPATHSIZE = 256;
 			IMG image;
@@ -52,16 +65,14 @@ namespace GenICam {
 		}
 
 	public:
+		///Constructor
 		Camera() : cvb_image(0), t_start(0.0) {
 		}
 
+		///Destructor
 		~Camera() {
 			if (cvb_image)
 				ReleaseObject(cvb_image);
-		}
-
-		virtual const cv::Mat& Image() {
-			return image;
 		}
 
 		virtual void Init(int device_nr = 0) {
@@ -108,6 +119,7 @@ namespace GenICam {
 			return GetValueString("DeviceModelName");
 		}
 
+		///Change camera port 
 		void Port(int index) {
 			cvbbool_t success = CanCameraSelect2(cvb_image);
 			if (!success)
@@ -123,6 +135,7 @@ namespace GenICam {
 			Update(cvb_image);
 		}
 
+		///Get camera port
 		int Port() {
 			cvbval_t port;
 			cvbres_t error = CS2GetCamPort(cvb_image, port);
@@ -132,6 +145,7 @@ namespace GenICam {
 			return port;
 		}
 
+		///Get number of ports
 		int PortNr() {
 			cvbbool_t success = CanCameraSelect2(cvb_image);
 			if (!success)
@@ -146,6 +160,7 @@ namespace GenICam {
 			return value;
 		}
 
+		///Get image type
 		int ImageType() {
 			int type;
 			if ((ImageDimension(cvb_image) == 3) && BitsPerPixel(ImageDatatype(cvb_image, 0) == 8))
@@ -157,6 +172,8 @@ namespace GenICam {
 			return type;
 		}
 
+		///Get all present devices supported by the driver
+		///There can be multiple cameras
 		void GetDevices(vector<string>& names) {
 			int camera_index = 0;
 			while (true) {
@@ -171,6 +188,7 @@ namespace GenICam {
 		}
 	};
 
+	///Dual camera providing RGB, NIR and NDVI images
 	class RGBNCamera : public CameraBase {
 	protected:
 		bool trigger_software;
@@ -210,6 +228,7 @@ namespace GenICam {
 			nir_camera.Capture();
 		}
 
+		///Return 4-channel RGBN image by default
 		virtual const cv::Mat& Image() {
 			std::vector<cv::Mat> channels;
 			cv::split(rgb_camera.Image(), channels); // break image into channels
@@ -218,14 +237,17 @@ namespace GenICam {
 			return image;
 		}
 
+		///Return RGB image
 		const cv::Mat& RGBImage() {
 			return rgb_camera.Image();
 		}
 
+		///Return NIR image
 		const cv::Mat& NIRImage() {
 			return nir_camera.Image();
 		}
 
+		///Return NDVI image
 		const cv::Mat& NDVIImage() {
 			//NDVI = (NIR - RED)/(NIR + RED)
 			cv::Mat red, nir;
@@ -240,22 +262,27 @@ namespace GenICam {
 			return ndvi_image;
 		}
 
+		///Get image/sensor timestamp
 		virtual long long TimeStamp() {
 			return rgb_camera.TimeStamp();
 		}
 
+		///get timestamp for the rgb image
 		long long RGBTimeStamp() {
 			return rgb_camera.TimeStamp();
 		}
 
+		///get timestamp for the nir image
 		long long NIRTimeStamp() {
 			return nir_camera.TimeStamp();
 		}
 
+		///get handle to the RGB camera
 		const GenICam::Camera& RGBCamera() {
 			return rgb_camera;
 		}
 
+		///get handle to the NIR camera
 		const GenICam::Camera& NIRCamera() {
 			return nir_camera;
 		}

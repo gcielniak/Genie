@@ -21,7 +21,7 @@ set (extra_libs ${extra_libs} CVB::CVCDriver CVB::CVCUtilities CVB::CVGenApi)
 
 set (header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/Camera.h
-	${CMAKE_CURRENT_SOURCE_DIR}/include/Parameter.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/Feature.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/AD_130GE.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/GenieNano.h)
 	

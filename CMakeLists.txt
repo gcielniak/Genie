@@ -1,20 +1,21 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 
-project(genie)
+project(Genie)
 
+#additional cmake definitions
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 
+#build the ROS interface if using catkin
 if(CATKIN_ENV)
-
+	
 	find_package(catkin REQUIRED COMPONENTS
-	  roscpp
-	  std_msgs
-	sensor_msgs
-cv_bridge
-image_transport
-
-	)
+		roscpp
+		std_msgs
+		sensor_msgs
+		cv_bridge
+		image_transport
+		)
 
 	###################################
 	## catkin specific configuration ##
@@ -28,11 +29,13 @@ image_transport
 	catkin_package(
 	#  INCLUDE_DIRS include
 	#  LIBRARIES genie_ros
-	  CATKIN_DEPENDS roscpp std_msgs sensor_msgs cv_bridge image_transport
+		CATKIN_DEPENDS roscpp std_msgs sensor_msgs cv_bridge image_transport
 	#  DEPENDS system_lib
 	)
+	
 	add_subdirectory(genie_ros)
-ENDIF(CATKIN_ENV)
+
+endif(CATKIN_ENV)
 
 add_subdirectory(GenieLib)
 add_subdirectory(Apps)
