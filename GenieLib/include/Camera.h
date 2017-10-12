@@ -257,7 +257,9 @@ namespace GenICam {
 
 			nir_camera.Image().convertTo(nir, CV_32F);
 
-			ndvi_image = ((nir - red) / (nir + red) + 1.0) / 2;
+			ndvi_image = 255*((nir - red) / (nir + red) + 1.0) / 2;
+
+			ndvi_image.convertTo(ndvi_image, CV_8UC1);
 
 			return ndvi_image;
 		}

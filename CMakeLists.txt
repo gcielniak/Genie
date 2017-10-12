@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 
-project(Genie)
+project(genie)
 
 #additional cmake definitions
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")

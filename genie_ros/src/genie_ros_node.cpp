@@ -27,17 +27,21 @@ std_msgs::Header header; // empty header
 
 	try {
 		camera.Init();
+		camera.Start();
 	}
 	catch (std::exception& e) {
 		cerr << e.what() << endl;
-}
+	}
+
+	cerr << "Camera Initialised." << endl;
 
   while (ros::ok()) {
 
 	if (image_pub.getNumSubscribers()) {
+		camera.Capture();
 		header.seq = count; // user defined counter
 		header.stamp = ros::Time::now(); // time
-		img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::RGB8, camera.NDVIImage());
+		img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::MONO8, camera.NDVIImage());
 		img_bridge.toImageMsg(msg); // from cv_bridge to sensor_msgs::Image
 	    image_pub.publish(msg);
 	    ++count;
