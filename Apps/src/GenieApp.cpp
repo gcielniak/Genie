@@ -14,27 +14,34 @@ int main(int argc, char* argv[]) {
 		camera.Init();
 		camera.Start();
 		cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
+
 		while (key != 27) {
 
 			camera.Capture();
 
 			cv::Mat rgb_image = camera.RGBImage();
 
-			cv::Mat vis_image = rgb_image;
+			cv::Mat vis_image;
 			std::vector<cv::Mat> channels;
 			cv::split(rgb_image, channels); // break image into channels
-			cv::merge({ { channels[2], channels[2], channels[2] } }, vis_image);
+			channels[0] = channels[2];
+			channels[1] = channels[2];
+			cv::merge(channels, vis_image);
 
 			cv::Mat nir_image = camera.NIRImage();
-			cv::merge({ { nir_image, nir_image, nir_image} }, nir_image);
+			channels[0] = channels[1] = channels[2] = nir_image;
+			cv::merge(channels, nir_image);
 
 			cv::Mat ndvi_image = camera.NDVIImage();
-			cv::merge({ { ndvi_image, ndvi_image, ndvi_image } }, ndvi_image);
+			channels[0] = channels[1] = channels[2] = ndvi_image;
+			cv::merge(channels, ndvi_image);
 
 			cv::Mat row_1, row_2, image;
-			cv::hconcat(row_1, vis_image, nir_image);
-			cv::hconcat(row_2, rgb_image, ndvi_image);
-			cv::vconcat(image, row_1, row_2);
+			cv::hconcat(vis_image, nir_image, row_1);
+			cv::hconcat(rgb_image, ndvi_image, row_2);
+			cv::vconcat(row_1, row_2, image);
+
+			cv::resize(image, image, image.size() / 2);
 
 			cv::imshow(window_name, image);
 
