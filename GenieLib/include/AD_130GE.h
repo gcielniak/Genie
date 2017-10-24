@@ -52,13 +52,30 @@ namespace JAI {
 				rgb_camera.Port(1);
 
 			//enforce two camera sync
+//			ShutterMode(JAI::ExposureAutoContinuous);
+			ShutterMode(JAI::ProgrammableExposure);
 			SyncMode(true);
+			GainAuto(true, true);
+			AGCReference(400, 400);
+			ExposureTime(400, 200);
 
-			//adjust auto-tune parameters
-			GainAuto(true);
-			ShutterMode(JAI::ExposureAutoContinuous);
+			if (true) {	//softsync
+				SoftwareTrigger(true);//this slows down everything
+			} 
+			else {
+				rgb_camera.TriggerSource(GenICam::PulseGenerator0);
+				nir_camera.TriggerSource(GenICam::PulseGenerator0);
 
-			SoftwareTrigger(true);
+				//clock prescaler
+				rgb_camera.SetValue("PulseGeneratorSelector", 0);
+				rgb_camera.SetValue("ClockPreScaler", 512);
+				rgb_camera.SetValue("PulseGeneratorLength", 13366);
+				rgb_camera.SetValue("PulseGeneratorEndPoint", 1000);
+
+				//trigger on
+				rgb_camera.TriggerMode(true);
+				nir_camera.TriggerMode(true);
+			}
 		}
 
 		///software trigger
@@ -89,10 +106,21 @@ namespace JAI {
 			nir_camera.SetValue("ShutterMode", type);
 		}
 
+		//Use in combination with the ShutterModeType::ProgrammableExposure 
+		void ExposureTime(int rgb_value, int nir_value) {
+			rgb_camera.SetValue("JAIExposureTimeRaw", rgb_value);
+			nir_camera.SetValue("JAIExposureTimeRaw", nir_value);
+		}
+
 		///Auto Gain for both cameras
-		void GainAuto(bool value) {
-			rgb_camera.GainAuto(value);
-			nir_camera.GainAuto(value);
+		void GainAuto(bool rgb_value, bool nir_value) {
+			rgb_camera.GainAuto(rgb_value);
+			nir_camera.GainAuto(nir_value);
+		}
+
+		void AGCReference(int rgb_value, int nir_value) {
+			rgb_camera.SetValue("AGCReference", rgb_value);
+			nir_camera.SetValue("AGCReference", nir_value);
 		}
 
 		///Camera name
